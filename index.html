@@ -217,22 +217,46 @@
     document.body.appendChild(contenedorMensaje);
   }
 
-  function generarMensajeEspiritual(cartas) {
-    const nombres = cartas.map(c => c.nombre);
-    if (nombres.includes("La Muerte") && nombres.includes("La Torre")) {
-      return "Estás en medio de una gran transformación. Aunque el caos parezca abrumador, es el camino hacia tu renovación espiritual.";
-    }
-    if (nombres.includes("El Mago") && nombres.includes("La Estrella")) {
-      return "Tu poder interior está alineado con la esperanza divina. Es momento de confiar y manifestar desde el alma.";
-    }
-    if (nombres.includes("La Sacerdotisa") && nombres.includes("El Colgado")) {
-      return "Silencia tu mente. La sabiduría vendrá cuando sueltes el control y observes con el corazón.";
-    }
-    if (nombres.includes("El Sol") && nombres.includes("La Emperatriz")) {
-      return "La luz te rodea. Es tiempo de florecer con alegría y gratitud por la abundancia que mereces.";
-    }
-    return "Este conjunto de cartas revela un momento de profunda conexión contigo misma. Escucha, siente y sigue tu intuición.";
+function generarMensajeEspiritual(cartas) {
+  const nombres = cartas.map(c => c.nombre);
+
+  if (nombres.includes("La Muerte") && nombres.includes("La Torre")) {
+    return "Estás en medio de una gran transformación. Aunque el caos parezca abrumador, es el camino hacia tu renovación espiritual.";
   }
+  if (nombres.includes("El Mago") && nombres.includes("La Estrella")) {
+    return "Tu poder interior está alineado con la esperanza divina. Es momento de confiar y manifestar desde el alma.";
+  }
+  if (nombres.includes("La Sacerdotisa") && nombres.includes("El Colgado")) {
+    return "Silencia tu mente. La sabiduría vendrá cuando sueltes el control y observes con el corazón.";
+  }
+  if (nombres.includes("El Sol") && nombres.includes("La Emperatriz")) {
+    return "La luz te rodea. Es tiempo de florecer con alegría y gratitud por la abundancia que mereces.";
+  }
+  if (nombres.includes("El Diablo") && nombres.includes("La Justicia")) {
+    return "Es momento de liberarte de lo que te ata. La verdad interior te dará equilibrio y paz.";
+  }
+  if (nombres.includes("La Rueda de la Fortuna") && nombres.includes("El Loco")) {
+    return "El universo te empuja a una nueva aventura. Confía en el cambio y fluye con la energía del destino.";
+  }
+  if (nombres.includes("El Mago") && nombres.includes("El Diablo")) {
+    return "Tienes el poder de liberarte. Usa tu voluntad con conciencia y romperás con patrones destructivos.";
+  }
+  if (nombres.includes("La Estrella") && nombres.includes("La Sacerdotisa")) {
+    return "Tu intuición es una guía sagrada. La fe en lo invisible te conducirá hacia el despertar.";
+  }
+  if (nombres.includes("La Muerte") && nombres.includes("El Colgado")) {
+    return "Debes soltar lo que ya no resuena. En la pausa y el cambio se gesta tu transformación más pura.";
+  }
+  if (nombres.includes("El Sol") && nombres.includes("La Rueda de la Fortuna")) {
+    return "La suerte está a tu favor. La claridad y la alegría marcarán un ciclo de abundancia positiva.";
+  }
+  if (nombres.includes("La Justicia") && nombres.includes("El Colgado")) {
+    return "La paciencia te conducirá a la verdad. No tomes decisiones apresuradas; observa y confía en la balanza del tiempo.";
+  }
+
+  return "Este conjunto de cartas revela un momento de profunda conexión contigo misma. Escucha, siente y sigue tu intuición.";
+}
+
 </script>
 
 </body>
