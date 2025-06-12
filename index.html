@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tarot Interactivo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Cinzel Decorative', cursive;
+      margin: 0;
+      padding: 40px 20px;
+      text-align: center;
+      color: #f0e6f6;
+      background: linear-gradient(#0f0c29, #302b63, #24243e);
+      background-attachment: fixed;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: url('https://www.transparenttextures.com/patterns/stardust.png');
+      opacity: 0.85;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    h1 {
+      font-size: 3rem;
+      color: #f6e58d;
+      margin-bottom: 40px;
+      text-shadow: 0 0 10px #f6e58d, 0 0 30px #eccc68;
+    }
+
+    .cartas {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 30px;
+      max-width: 1000px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .carta {
+      aspect-ratio: 2/3;
+      perspective: 1000px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .carta:hover {
+      transform: scale(1.05);
+    }
+
+    .contenido {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.8s;
+    }
+
+    .carta.volteada .contenido {
+      transform: rotateY(180deg);
+    }
+
+    .frente, .reverso {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 12px;
+      backface-visibility: hidden;
+      box-shadow: 0 0 18px rgba(255, 255, 255, 0.2);
+      background-size: cover;
+      background-position: center;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .frente {
+      transform: rotateY(180deg);
+    }
+
+    .reverso {
+      background-image: url('assets/fondo.jpg');
+      filter: brightness(0.8) contrast(1.2);
+    }
+
+    /* Ventana mágica */
+    .mensaje {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(23, 23, 39, 0.95);
+      border: 2px solid #f6e58d;
+      color: #fff;
+      padding: 25px;
+      border-radius: 14px;
+      z-index: 999;
+      max-width: 320px;
+      box-shadow: 0 0 25px #f6e58d;
+      animation: aparecer 0.6s ease-out;
+    }
+
+    @keyframes aparecer {
+      from { opacity: 0; transform: scale(0.6) translate(-50%, -50%); }
+      to   { opacity: 1; transform: scale(1) translate(-50%, -50%); }
+    }
+
+    .mensaje button {
+      background: #f6e58d;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 12px;
+      cursor: pointer;
+      border-radius: 8px;
+      font-weight: bold;
+      font-family: 'Cinzel Decorative', cursive;
+      color: #2d3436;
+      box-shadow: 0 0 10px #f6e58d;
+    }
+
+    #reiniciar {
+      margin-top: 40px;
+      padding: 14px 28px;
+      background: #f6e58d;
+      border: none;
+      color: #2d3436;
+      font-weight: bold;
+      font-size: 1.1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 12px #f6e58d;
+      transition: transform 0.3s;
+    }
+
+    #reiniciar:hover {
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+    
+ 
+  <h1>Elige una carta del Tarot 🔮</h1>
+  <div class="cartas" id="cartas"></div>
+  <button id="reiniciar" onclick="location.reload()">🔁 Volver a barajar</button>
+
+  <audio id="campanita" src="assets/campana.mp3" preload="auto"></audio>
+
+  <script>
+  const cartas = [
+    { nombre: "El Loco", img: "assets/loco.jpg", significado: "Nuevos comienzos, libertad, fe en el viaje." },
+    { nombre: "La Emperatriz", img: "https://upload.wikimedia.org/wikipedia/commons/d/d2/RWS_Tarot_03_Empress.jpg", significado: "Fertilidad, abundancia, creatividad." },
+    { nombre: "El Mago", img: "assets/mago.jpg", significado: "Poder personal, manifestación, habilidad." },
+    { nombre: "El Colgado", img: "https://upload.wikimedia.org/wikipedia/commons/2/2b/RWS_Tarot_12_Hanged_Man.jpg", significado: "Pausa necesaria, rendición, perspectiva nueva." },
+    { nombre: "La Estrella", img: "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_17_Star.jpg", significado: "Esperanza, sanación, guía espiritual." },
+    { nombre: "El Sol", img: "assets/sol.jpg", significado: "Éxito, alegría, claridad." },
+    { nombre: "La Muerte", img: "https://upload.wikimedia.org/wikipedia/commons/d/d7/RWS_Tarot_13_Death.jpg", significado: "Transformación profunda, cierre, renacimiento." },
+    { nombre: "La Torre", img: "https://upload.wikimedia.org/wikipedia/commons/5/53/RWS_Tarot_16_Tower.jpg", significado: "Cambio repentino, revelación, caos necesario." },
+    { nombre: "La Sacerdotisa", img: "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg", significado: "Sabiduría interior, intuición, misterio." },
+    { nombre: "La Rueda de la Fortuna", img: "https://upload.wikimedia.org/wikipedia/commons/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg", significado: "Destino, cambios, ciclos que giran." },
+    { nombre: "El Diablo", img: "https://upload.wikimedia.org/wikipedia/commons/5/55/RWS_Tarot_15_Devil.jpg", significado: "Tentación, apegos, liberación necesaria." },
+    { nombre: "La Justicia", img: "https://upload.wikimedia.org/wikipedia/commons/e/e0/RWS_Tarot_11_Justice.jpg", significado: "Verdad, equilibrio, decisiones correctas." }
+  ];
+
+  const contenedor = document.getElementById('cartas');
+  const sonido = document.getElementById('campanita');
+  let seleccionadas = 0;
+  const MAX_CARTAS = 3;
+  const seleccion = [];
+
+  const baraja = cartas.sort(() => Math.random() - 0.5);
+
+  baraja.forEach(carta => {
+    const div = document.createElement('div');
+    div.classList.add('carta');
+    div.innerHTML = `
+      <div class="contenido">
+        <div class="frente" style="background-image: url('${carta.img}')" title="${carta.nombre}"></div>
+        <div class="reverso"></div>
+      </div>
+    `;
+    div.addEventListener('click', () => {
+      if (div.classList.contains('volteada') || seleccionadas >= MAX_CARTAS) return;
+
+      div.classList.add('volteada');
+      seleccionadas++;
+      seleccion.push(carta);
+      sonido.currentTime = 0;
+      sonido.play();
+      mostrarSignificado(carta.nombre, carta.significado);
+
+      if (seleccionadas === MAX_CARTAS) {
+        setTimeout(() => {
+          const nombres = seleccion.map(c => c.nombre).join(', ');
+          const mensaje = generarMensajeEspiritual(seleccion);
+          mostrarSignificado("🌟 Tu Lectura Espiritual", `Has elegido: <em>${nombres}</em>.<br><br>${mensaje}`);
+        }, 2500);
+      }
+    });
+    contenedor.appendChild(div);
+  });
+
+  function mostrarSignificado(nombre, mensaje) {
+    const contenedorMensaje = document.createElement('div');
+    contenedorMensaje.classList.add('mensaje');
+    contenedorMensaje.innerHTML = `
+      <strong>${nombre}</strong>
+      <p>${mensaje}</p>
+      <button onclick="this.parentElement.remove()">Cerrar</button>
+    `;
+    document.body.appendChild(contenedorMensaje);
+  }
+
+  function generarMensajeEspiritual(cartas) {
+    const nombres = cartas.map(c => c.nombre);
+    if (nombres.includes("La Muerte") && nombres.includes("La Torre")) {
+      return "Estás en medio de una gran transformación. Aunque el caos parezca abrumador, es el camino hacia tu renovación espiritual.";
+    }
+    if (nombres.includes("El Mago") && nombres.includes("La Estrella")) {
+      return "Tu poder interior está alineado con la esperanza divina. Es momento de confiar y manifestar desde el alma.";
+    }
+    if (nombres.includes("La Sacerdotisa") && nombres.includes("El Colgado")) {
+      return "Silencia tu mente. La sabiduría vendrá cuando sueltes el control y observes con el corazón.";
+    }
+    if (nombres.includes("El Sol") && nombres.includes("La Emperatriz")) {
+      return "La luz te rodea. Es tiempo de florecer con alegría y gratitud por la abundancia que mereces.";
+    }
+    return "Este conjunto de cartas revela un momento de profunda conexión contigo misma. Escucha, siente y sigue tu intuición.";
+  }
+</script>
+
+</body>
+</html>
